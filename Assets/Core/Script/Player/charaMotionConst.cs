@@ -13,5 +13,5 @@ public class itemConst{
 	public const string player = "charactor";
 	public const string playerRightHand = "charactor/unitychan/mesh_root/skin/rightHand";
 	public const string bulletHolder = "bulletHolder";
-
+	public const string missilePositioner = "charactor/MissileSetPos/";
 }

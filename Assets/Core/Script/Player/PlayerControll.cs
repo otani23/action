@@ -18,7 +18,7 @@ public class PlayerControll : MonoBehaviour {
 	GameObject model;
 	public GameObject camera;
 	Animator animation;
-	Transform bulletHolder;
+	Transform bulletKeeper;
 
 	Vector3 defaultCameraPos = new Vector3(0f,2f,-5f);
 	Vector3 oldCameraPos;
@@ -27,11 +27,12 @@ public class PlayerControll : MonoBehaviour {
 	Transform enemyLook;
 
 	int missileCount = 0;
+	int missileHaveCount = 0;
 
 	// Use this for initialization
 	void Start () {
 		model = GameObject.Find ("unitychan");
-		bulletHolder = GameObject.Find (itemConst.bulletHolder).transform;
+		bulletKeeper = GameObject.Find (itemConst.missilePositioner).transform;
 		camera = GameObject.Find("Main Camera");
 		animation = model.GetComponent<Animator> ();
 	}
@@ -143,11 +144,14 @@ public class PlayerControll : MonoBehaviour {
 		}
 
 		if (Input.GetKey(KeyCode.O)) {
-			missileCount ++;
-			if(missileCount == 10)
-			{
-				setMissile();
-				missileCount = 0;
+			if(missileHaveCount < 10){
+				missileCount ++;
+				if(missileCount == 10)
+				{
+					setMissile();
+					missileHaveCount ++;
+					missileCount = 0;
+				}
 			}
 		} else if (Input.GetKeyUp (KeyCode.O)) {
 			shootMissile ();
@@ -157,18 +161,20 @@ public class PlayerControll : MonoBehaviour {
 	void shootBullet()
 	{
 		GameObject bullet = Instantiate (Resources.Load (itemConst.normalBullet)) as GameObject;
-		bullet.transform.parent = bulletHolder;
+		bullet.transform.parent = bulletKeeper;
 	}
 
 	void setMissile()
 	{
 		GameObject bullet = Instantiate (Resources.Load (itemConst.missle)) as GameObject;
-		bullet.transform.parent = bulletHolder;
+		bullet.name = "pos" + missileHaveCount.ToString();
 	}
 
 	void shootMissile()
 	{
-		bulletHolder.BroadcastMessage("Shoot");
+
+		bulletKeeper.BroadcastMessage("Shoot");
+		missileHaveCount = 0;
 	}
 
 	////////////////// CAMERA ////////////////////

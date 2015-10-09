@@ -7,9 +7,12 @@ public class missileBullet : MonoBehaviour {
 	Vector3 bulletSpeed;
 	Vector3 bulletDefaultPosition;
 	public GameObject TargetEnemy;
+	public GameObject Effect;
 
 	float speed = 1f;
-	
+	float upWaitTime = 2f;
+
+	bool upEnd = false;
 	bool input = false;
 	bool alreadyLock = false;
 	
@@ -21,8 +24,10 @@ public class missileBullet : MonoBehaviour {
 		
 		if(charaCont == null)
 			charaCont = GameObject.Find (itemConst.player).GetComponent<PlayerControll> ();
-		
-		bulletDefaultPosition = GameObject.Find (itemConst.playerRightHand).transform.position;
+
+		if (Effect == null)
+			Effect = this.transform.FindChild ("Effect").gameObject;
+
 		GetEnemyAndShootingInit ();
 	}
 	
@@ -31,7 +36,7 @@ public class missileBullet : MonoBehaviour {
 
 		if (input) {
 
-			if (TargetEnemy != null) {
+			if (TargetEnemy != null && upEnd){
 				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(TargetEnemy.transform.position - transform.position), 3f);
 			}
 			
@@ -57,18 +62,25 @@ public class missileBullet : MonoBehaviour {
 		} else {
 			bulletSpeed = GameObject.Find(itemConst.player).transform.forward * 4f;
 		}
+
+		this.transform.parent = GameObject.Find (itemConst.missilePositioner + this.name).transform;
+//		bulletDefaultPosition = GameObject.Find (itemConst.missilePositioner + this.name).transform.position;
+		this.transform.position = this.transform.parent.position;
+		Debug.Log ("::"+ this.transform.parent.position);
+
+		Effect.gameObject.SetActive (false);
 		alreadyLock = true;
 	}
 
 	
 	public void GetEnemyAndShooting()
 	{
-		this.transform.position = bulletDefaultPosition;
+		this.transform.position = this.transform.parent.position;
 		if (TargetEnemy != null) {
 			Vector3 enemyPos = TargetEnemy.transform.position;
 			this.transform.LookAt(TargetEnemy.transform.position);
+			this.transform.Rotate(new Vector3(-70f,0f,0f));
 			bulletSpeed = this.transform.forward;
-			Debug.Log(	this.TargetEnemy.transform.position);
 		}
 	}
 	
@@ -85,8 +97,17 @@ public class missileBullet : MonoBehaviour {
 
 	public void Shoot()
 	{
+		this.transform.parent = GameObject.Find (itemConst.bulletHolder).transform;
 		input = true;
 		Destroy (this.gameObject, 8);
+		Effect.gameObject.SetActive (true);
+		StartCoroutine (upStart ());
+	}
+
+	IEnumerator upStart()
+	{
+		yield return new WaitForSeconds (upWaitTime);
+		upEnd = true;
 	}
 }
 
