@@ -18,15 +18,20 @@ public class PlayerControll : MonoBehaviour {
 	GameObject model;
 	public GameObject camera;
 	Animator animation;
+	Transform bulletHolder;
 
 	Vector3 defaultCameraPos = new Vector3(0f,2f,-5f);
 	Vector3 oldCameraPos;
 
+	Vector3 enemyPosition;
+	Transform enemyLook;
 
+	int missileCount = 0;
 
 	// Use this for initialization
 	void Start () {
 		model = GameObject.Find ("unitychan");
+		bulletHolder = GameObject.Find (itemConst.bulletHolder).transform;
 		camera = GameObject.Find("Main Camera");
 		animation = model.GetComponent<Animator> ();
 	}
@@ -39,6 +44,7 @@ public class PlayerControll : MonoBehaviour {
 
 		sendFlontAnimation ();
 		PersonControll ();
+		actionControll ();
 
 		if (this.rigidbody.velocity != Vector3.zero) {
 			this.rigidbody.AddForce (-this.rigidbody.velocity / 10, ForceMode.Impulse);
@@ -130,11 +136,48 @@ public class PlayerControll : MonoBehaviour {
 		}
 	}
 
+	void actionControll()
+	{
+		if (Input.GetKeyDown (KeyCode.I)) {
+			shootBullet();
+		}
+
+		if (Input.GetKey(KeyCode.O)) {
+			missileCount ++;
+			if(missileCount == 10)
+			{
+				setMissile();
+				missileCount = 0;
+			}
+		} else if (Input.GetKeyUp (KeyCode.O)) {
+			shootMissile ();
+		}
+	}
+
+	void shootBullet()
+	{
+		GameObject bullet = Instantiate (Resources.Load (itemConst.normalBullet)) as GameObject;
+		bullet.transform.parent = bulletHolder;
+	}
+
+	void setMissile()
+	{
+		GameObject bullet = Instantiate (Resources.Load (itemConst.missle)) as GameObject;
+		bullet.transform.parent = bulletHolder;
+	}
+
+	void shootMissile()
+	{
+		bulletHolder.BroadcastMessage("Shoot");
+	}
+
 	////////////////// CAMERA ////////////////////
 
 	public void TargetLock(Vector3 enemyVec)
 	{
-		this.transform.LookAt (enemyVec);
+		enemyLook = this.transform;
+		enemyLook.LookAt (enemyVec);
+//		this.transform.LookAt (enemyVec);
 		isEnemyLook = true;
 	}
 
@@ -151,7 +194,13 @@ public class PlayerControll : MonoBehaviour {
 			quat.x = rotation.x - (rotation.x / 200f);
 			quat.z = rotation.z - (rotation.z / 200f);
 //			this.transform.rotation = quat;
-			this.transform.rotation = Quaternion.Slerp(this.transform.rotation,quat,0.1f);
+			this.transform.rotation = Quaternion.Slerp (this.transform.rotation, quat, 0.1f);
+		} else if (isEnemyLook) {
+			Quaternion quat = enemyLook.transform.rotation;
+			quat.x = rotation.x - (rotation.x / 200f);
+			quat.z = rotation.z - (rotation.z / 200f);
+			//			this.transform.rotation = quat;
+			this.transform.rotation = Quaternion.Slerp (this.transform.rotation, quat, 0.1f);
 		}
 	}
 
@@ -164,7 +213,5 @@ public class PlayerControll : MonoBehaviour {
 
 		camera.GetComponent<Animator> ().SetInteger ("isBoost", 0);
 
-		Debug.Log("old::" + oldCameraPos);
-		Debug.Log ("now::" + (this.camera.transform.position - defaultCameraPos));
 	}
 }

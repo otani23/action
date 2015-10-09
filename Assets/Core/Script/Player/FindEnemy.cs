@@ -23,7 +23,6 @@ public class FindEnemy : MonoBehaviour {
 	{
 		if (enemy == null && col.gameObject.CompareTag ("Enemy")) {
 			enemy = col.gameObject;
-			Debug.Log("IsTrigger");
 		}
 	}
 	void  OnTriggerExit(Collider col)

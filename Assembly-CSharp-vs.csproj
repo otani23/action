@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{FC9411EB-1B12-4154-0219-EEA7CBD09863}</ProjectGuid>
+	<ProjectGuid>{58AB2A31-6E58-3FC3-8302-9E711B939716}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -46,10 +46,16 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Core\FindEnemy.cs" />
-     <Compile Include="Assets\Core\PlayerControll.cs" />
-     <Compile Include="Assets\Core\charaMotionConst.cs" />
-     <Compile Include="Assets\Core\wallTrap.cs" />
+     <Compile Include="Assets\Core\Script\Enemy\EnemyCreater.cs" />
+     <Compile Include="Assets\Core\Script\Enemy\RandomMove.cs" />
+     <Compile Include="Assets\Core\Script\Player\FindEnemy.cs" />
+     <Compile Include="Assets\Core\Script\Player\PlayerControll.cs" />
+     <Compile Include="Assets\Core\Script\Player\charaMotionConst.cs" />
+     <Compile Include="Assets\Core\Script\bullet\EffectDeath.cs" />
+     <Compile Include="Assets\Core\Script\bullet\missileBullet.cs" />
+     <Compile Include="Assets\Core\Script\bullet\normalBullet.cs" />
+     <Compile Include="Assets\Core\Script\wallTrap.cs" />
+     <Compile Include="Assets\Unity\ExportAssetBundles.cs" />
      <Compile Include="Assets\UnityChan\Scripts\AutoBlink.cs" />
      <Compile Include="Assets\UnityChan\Scripts\CameraController.cs" />
      <Compile Include="Assets\UnityChan\Scripts\FaceUpdate.cs" />
