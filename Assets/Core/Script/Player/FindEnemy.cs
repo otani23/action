@@ -19,6 +19,8 @@ public class FindEnemy : MonoBehaviour {
 		}
 	}
 
+
+
 	void OnTriggerStay(Collider col)
 	{
 		if (enemy == null && col.gameObject.CompareTag ("Enemy")) {
