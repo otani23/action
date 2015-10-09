@@ -7,8 +7,11 @@ public class missileBullet : MonoBehaviour {
 	Vector3 bulletSpeed;
 	Vector3 bulletDefaultPosition;
 	public GameObject TargetEnemy;
+
+	float speed = 1f;
 	
 	bool input = false;
+	bool alreadyLock = false;
 	
 	// Use this for initialization
 	void Start () {
@@ -25,8 +28,20 @@ public class missileBullet : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
 		if (input) {
-			transform.Translate (bulletSpeed);
+
+			if (TargetEnemy != null) {
+				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(TargetEnemy.transform.position - transform.position), 3f);
+			}
+			
+			transform.position += transform.forward * speed;
+			if(TargetEnemy != null){
+				if( Vector3.Distance( transform.position , TargetEnemy.transform.position )<=0.1f)
+				{
+					GameObject.Destroy(this.gameObject);
+				}
+			}
 		} else {
 			GetEnemyAndShooting ();
 		}
@@ -35,15 +50,14 @@ public class missileBullet : MonoBehaviour {
 	public void GetEnemyAndShootingInit()
 	{
 		this.transform.position = bulletDefaultPosition;
-		if (findEnemy.enemy != null) {
+		if (findEnemy.enemy != null && !alreadyLock) {
 			TargetEnemy = findEnemy.enemy;
-			Debug.Log("target::" + TargetEnemy);
-			
 			Vector3 enemyPos = findEnemy.enemy.transform.position;
 			bulletSpeed = (enemyPos - bulletDefaultPosition).normalized;	
 		} else {
 			bulletSpeed = GameObject.Find(itemConst.player).transform.forward * 4f;
 		}
+		alreadyLock = true;
 	}
 
 	
@@ -52,7 +66,6 @@ public class missileBullet : MonoBehaviour {
 		this.transform.position = bulletDefaultPosition;
 		if (TargetEnemy != null) {
 			Vector3 enemyPos = TargetEnemy.transform.position;
-//			bulletSpeed = (enemyPos - this.transform.position).normalized * 10;	
 			this.transform.LookAt(TargetEnemy.transform.position);
 			bulletSpeed = this.transform.forward;
 			Debug.Log(	this.TargetEnemy.transform.position);
@@ -73,7 +86,7 @@ public class missileBullet : MonoBehaviour {
 	public void Shoot()
 	{
 		input = true;
-		Destroy (this.gameObject, 10);
+		Destroy (this.gameObject, 8);
 	}
 }
 
